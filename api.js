@@ -10,7 +10,7 @@ const { Client, LocalAuth } = require("whatsapp-web.js");
 process.title = "whatsapp-node-api";
 global.client = new Client({
   authStrategy: new LocalAuth(),
-  puppeteer: { headless: true },
+  puppeteer: { headless: true, args: ['--no-sandbox', '--disabled-setupid-sandbox'] },
 });
 
 global.authed = false;
@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 client.on("qr", (qr) => {
   console.log("qr");
+  console.log(qr);
   fs.writeFileSync("./components/last.qr", qr);
 });
 

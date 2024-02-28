@@ -71,12 +71,13 @@ router.post('/sendpdf/:phone', async (req,res) => {
 
     let phone = req.params.phone;
     let pdf = req.body.pdf;
+    let namePdf = req.body.fileName;
 
     if (phone == undefined || pdf == undefined) {
         res.send({ status: "error", message: "please enter valid phone and base64/url of pdf" })
     } else {
         if (base64regex.test(pdf)) {
-            let media = new MessageMedia('application/pdf', pdf);
+            let media = new MessageMedia('application/pdf', pdf, namePdf);
             client.sendMessage(`${phone}@c.us`, media).then((response) => {
                 if (response.id.fromMe) {
                     res.send({ status: 'success', message: `MediaMessage successfully sent to ${phone}` })

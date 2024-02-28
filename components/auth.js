@@ -5,12 +5,19 @@ router.get("/checkauth", async (req, res) => {
   client
     .getState()
     .then((data) => {
-      console.log(data);
-      res.send(data);
+      if(data){
+        console.log('Data true:',data);
+        res.send("<html><body><h2>Conectado</h2></body></html>");
+      }else{
+        console.log('Data False: ', data);
+        sendQr(res, 'DESCONECTADO');
+        //res.send(data);
+      }
+      
     })
     .catch((err) => {
       if (err) {
-        res.send("DISCONNECTED");
+        res.send('DESCONECTADO');
       }
     });
 });
@@ -20,19 +27,20 @@ router.get("/getqr", async (req, res) => {
     .getState()
     .then((data) => {
       if (data) {
-        res.write("<html><body><h2>Already Authenticated</h2></body></html>");
+        res.write("<html><body><h2>Ya esta Logeado</h2></body></html>");
         res.end();
-      } else sendQr(res);
+      } else sendQr(res, null);
     })
-    .catch(() => sendQr(res));
+    .catch(() => sendQr(res, null));
 });
 
-function sendQr(res) {
+function sendQr(res, estado) {
   fs.readFile("components/last.qr", (err, last_qr) => {
     if (!err && last_qr) {
       var page = `
                     <html>
                         <body>
+                            ${estado === null? '':'<h1>DESCONECTADO</h1><br><h2>Scanear QR</h2>'}
                             <script type="module">
                             </script>
                             <div id="qrcode"></div>
